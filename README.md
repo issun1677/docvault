@@ -1,2 +1,2 @@
 # docvault
-Document management system with versioning, search, and access control - built with Django
+Document management system with versioning, search, and access control powered by Djnago
