@@ -2,35 +2,57 @@
 <html>
 <head>
     <title>Documents</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>All Documents</h1>
+<body class="bg-gray-50">
+    {% include 'repository/navbar.html' %}
     
-    <a href="{% url 'upload_document' %}">Upload New Document</a>
-    
-    <table border="1">
-        <tr>
-            <th>Filename</th>
-            <th>Size</th>
-            <th>Type</th>
-            <th>Uploaded</th>
-            <th>Actions</th>
-        </tr>
-        {% for document in documents %}
-        <tr>
-            <td>{{ document.original_file_name }}</td>
-            <td>{{ document.file_size }} bytes</td>
-            <td>{{ document.mime_type }}</td>
-            <td>{{ document.uploaded_at }}</td>
-            <td>
-                <a href="#">Download</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="5">No documents uploaded yet.</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <div class="max-w-6xl mx-auto px-8 py-12">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-4xl font-semibold text-gray-900">Documents</h1>
+                <a href="{% url 'upload_document' %}" 
+                   class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2.5 px-5 rounded-lg transition-all">
+                    Upload
+                </a>
+            </div>
+            
+            <div class="overflow-hidden">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-4 px-4 font-medium text-sm text-gray-500">Name</th>
+                            <th class="text-left py-4 px-4 font-medium text-sm text-gray-500">Size</th>
+                            <th class="text-left py-4 px-4 font-medium text-sm text-gray-500">Type</th>
+                            <th class="text-left py-4 px-4 font-medium text-sm text-gray-500">Date</th>
+                            <th class="text-left py-4 px-4 font-medium text-sm text-gray-500"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for document in documents %}
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                            <td class="py-4 px-4 text-gray-900">{{ document.original_file_name }}</td>
+                            <td class="py-4 px-4 text-sm text-gray-600">{{ document.file_size }} bytes</td>
+                            <td class="py-4 px-4 text-sm text-gray-600">{{ document.mime_type }}</td>
+                            <td class="py-4 px-4 text-sm text-gray-600">{{ document.uploaded_at|date:"M d, Y" }}</td>
+                            <td class="py-4 px-4">
+                                <a href="#" 
+                                   class="text-blue-500 hover:text-blue-600 font-medium text-sm transition-colors">
+                                    Download
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-12 px-4 text-center text-gray-400">
+                                No documents yet
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

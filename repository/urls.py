@@ -3,5 +3,6 @@ from django.urls import path
 
 urlpatterns = [
     path('upload/', views.upload_document, name='upload_document'),
-    path('document_list/', views.list_document, name='list_document')
+    path('document_list/', views.list_document, name='list_document'),
+    path('', views.dashboard, name='dashboard')
 ]
