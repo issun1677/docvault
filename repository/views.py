@@ -1,7 +1,8 @@
-from django.shortcuts import render, redirect  
+from django.shortcuts import render, redirect, get_object_or_404
 from repository.forms import DocumentForm
 from repository.models import Document
 from django.utils import timezone
+from django.http import FileResponse
 from datetime import timedelta
 # Create your views here.
 
@@ -53,3 +54,16 @@ def dashboard(request):
         'recent_documents': recent_documents,
     }
     return render(request, 'repository/dashboard.html', context)
+
+def document_download(request, document_id):
+    document = get_object_or_404(Document, id=document_id)
+
+    #Opens File
+    file_handle = document.file.open('rb')
+    #Create Response with a File
+    response = FileResponse(file_handle)
+    response['Content-Type'] = document.mime_type
+    response['Content-Disposition'] = f'attachment; filename="{document.original_file_name}"'
+    
+    return response
+
