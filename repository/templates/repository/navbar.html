@@ -10,6 +10,11 @@
             
             <!-- Navigation Links -->
             <div class="hidden md:flex items-center space-x-8">
+                {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}" 
+                   class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                    Dashboard
+                </a>
                 <a href="{% url 'list_document' %}" 
                    class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                     Documents
@@ -18,21 +23,27 @@
                    class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
                     Upload
                 </a>
-                <a href="{% url 'dashboard' %}" 
-                   class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                    Dashboard
-                </a>
-                
+                {% endif %}
             </div>
-
             
-            
-            <!-- Right side -->
-            <div class="flex items-center">
-                <a href="/admin/" 
+            <!-- Right side - User menu -->
+            <div class="flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                <span class="text-sm text-gray-600">HI! .. {{ user.username }}</span>
+                <a href="{% url 'logout' %}" 
                    class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                    Hi, Admin
+                    Logout
                 </a>
+                {% else %}
+                <a href="{% url 'login' %}" 
+                   class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                    Login
+                </a>
+                <a href="{% url 'register' %}" 
+                   class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                    Sign Up
+                </a>
+                {% endif %}
             </div>
         </div>
     </div>

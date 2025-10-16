@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from repository.forms import DocumentForm
 from repository.models import Document
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.http import FileResponse
 from datetime import timedelta
 # Create your views here.
 
+@login_required
 def upload_document(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -15,6 +17,7 @@ def upload_document(request):
             document.original_file_name = uploaded_file.name
             document.file_size = uploaded_file.size
             document.mime_type = uploaded_file.content_type
+            document.uploaded_by = request.user 
             document.save()
             return redirect('list_document')
     else:
@@ -25,15 +28,16 @@ def upload_document(request):
     return render(request, 'repository/upload.html', context)
 
 
-
+@login_required
 def list_document(request):
-    document_view = Document.objects.all()
+    document_view = Document.objects.filter(uploaded_by=request.user)
     context = {"documents": document_view}
     return render(request, 'repository/document_list.html', context)
 
 
+@login_required
 def dashboard(request):
-    documents = Document.objects.all()
+    documents = Document.objects.filter(uploaded_by=request.user)
     total_documents = documents.count()
     
     # Calculate total storage used
@@ -55,6 +59,7 @@ def dashboard(request):
     }
     return render(request, 'repository/dashboard.html', context)
 
+@login_required
 def document_download(request, document_id):
     document = get_object_or_404(Document, id=document_id)
 
