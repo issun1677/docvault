@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
-
-
+from .models import Profile
+from repository.models import Document
+from datetime import timedelta
+from django.utils import timezone
 
 def register_user(request):
     if request.method == 'POST':
@@ -34,3 +37,32 @@ def user_login(request):
 def user_logout(request):
     logout(request)
     return redirect('login')
+
+@login_required
+def show_profile(request):
+    profile = request.user.profile
+    documents = Document.objects.filter(uploaded_by=request.user)
+
+    #Calculating User's Document statistics
+    total_documents = documents.count()
+    total_storage = sum(doc.file_size for doc in documents)
+    total_storage_mb = round(total_storage / (1024 * 1024), 2) if total_storage > 0 else 0
+
+    # recent uploads "weekly"
+    week_ago = timezone.now() - timedelta(days=7)
+    recent_uploads = documents.filter(uploaded_at__gte=week_ago).count()
+
+    context = {
+        'profile': profile,
+        'total_documents': total_documents,
+        'total_storage_mb': total_storage_mb,
+        'recent_uploads': recent_uploads,
+    }
+
+    return render(request, 'userauth/profile.html', context)
+
+
+@login_required
+def edit_profile(request):
+    # TODO: Build edit profile functionality
+    return redirect('profile')
