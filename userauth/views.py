@@ -6,6 +6,10 @@ from .models import Profile
 from repository.models import Document
 from datetime import timedelta
 from django.utils import timezone
+from .forms import ProfileForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+
 
 def register_user(request):
     if request.method == 'POST':
@@ -64,5 +68,34 @@ def show_profile(request):
 
 @login_required
 def edit_profile(request):
-    # TODO: Build edit profile functionality
-    return redirect('profile')
+    user = request.user
+    profile = user.profile
+
+    if request.method == 'POST':        
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)
+
+        if profile_form.is_valid():
+            profile_form.save()
+            return redirect('profile')
+    else:
+        profile_form = ProfileForm(instance=profile)
+
+    context = {
+        'profile_form': profile_form,
+    }
+
+    return render(request, 'userauth/edit_profile.html', context)
+
+
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            return redirect('profile')
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    return render(request, 'userauth/change_password.html', {'form': form})
+
